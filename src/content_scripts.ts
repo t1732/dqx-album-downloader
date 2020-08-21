@@ -1,3 +1,4 @@
-window.onload = function() {
-  console.log('test');
+const main = () => {
 }
+
+main()
