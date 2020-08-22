@@ -9,35 +9,42 @@ const config: ConfigurationFactory = () => {
     mode: "production",
     entry: {
       content_scripts: path.join(__dirname, "src", "content_scripts.ts"),
-      popup: path.join(__dirname, "src","popup.ts")
+      popup: path.join(__dirname, "src", "popup.ts"),
     },
     output: {
       path: path.join(__dirname, "dist"),
-      filename: "[name].js"
+      filename: "[name].js",
     },
     module: {
       rules: [
         {
           test: /.ts$/,
           use: "ts-loader",
-          exclude: "/node_modules/"
+          exclude: "/node_modules/",
         },
         {
           test: /\.pug$/,
-          use: "pug-loader"
+          use: [
+            {
+              loader: "pug-loader",
+              options: {
+                pretty: true,
+              },
+            },
+          ],
         },
         {
           test: /\.styl$/,
           use: [
             MiniCssExtractPlugin.loader,
             "css-loader",
-            "stylus-loader"
-          ]
-        }
-      ]
+            "stylus-loader",
+          ],
+        },
+      ],
     },
     resolve: {
-      extensions: [".ts", ".js", ".styl"]
+      extensions: [".ts", ".js", ".styl"],
     },
     plugins: [
       new CopyPlugin({
@@ -46,19 +53,21 @@ const config: ConfigurationFactory = () => {
             from: "public",
             to: ".",
             globOptions: {
-              dot: false
-            }
-          }
+              dot: false,
+            },
+          },
         ],
       }),
       new HtmlWebpackPlugin({
         filename: "popup.html",
-        template: "./src/popup.pug"
+        template: "./src/popup.pug",
+        chunks: ["popup"],
+        minify: false,
       }),
       new MiniCssExtractPlugin({
-        filename: "[name].css"
-      })
-    ]
+        filename: "[name].css",
+      }),
+    ],
   }
 }
 

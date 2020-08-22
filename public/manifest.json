@@ -15,5 +15,8 @@
         "content_scripts.js"
       ]
     }
+  ],
+  "permissions": [
+    "downloads"
   ]
 }
