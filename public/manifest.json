@@ -3,8 +3,13 @@
   "manifest_version": 2,
   "version": "1.0",
   "browser_action": {
-    "default_icon": "icon48.png",
+    "default_icon": "icon128.png",
     "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icon016.png",
+    "48": "icon048.png",
+    "128": "icon128.png"
   },
   "background": {
     "scripts": [
