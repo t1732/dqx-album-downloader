@@ -6,6 +6,12 @@
     "default_icon": "icon48.png",
     "default_popup": "popup.html"
   },
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": false
+  },
   "content_scripts": [
     {
       "matches": [
@@ -17,6 +23,7 @@
     }
   ],
   "permissions": [
+    "background",
     "downloads"
   ]
 }

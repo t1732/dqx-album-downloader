@@ -1,12 +1,16 @@
 const convertImageName = (name: string): string => {
-  return name ? name.replace(/\r?\n/g, " ") : "dq10-album-image"
+  if (name) {
+    return name.replace(/\r?\n/g, "_").replace(/\//g, "-").replace(/:/g, "")
+  } else {
+    return "dq10-album-image"
+  }
 }
 
 const downloadCurrentPageImages = (): boolean => {
   const imageFrame = document.querySelector(".contentsFrameArea")
 
   if (!imageFrame) {
-    console.log("ダウンロードできませんでした。思い出アルバムの構造が変わった可能性があります")
+    console.log("ダウンロードできませんでした。思い出アルバムページではないかHTMLの構造が変わった可能性があります")
     return false
   }
 
@@ -19,17 +23,18 @@ const downloadCurrentPageImages = (): boolean => {
     }
 
     const imageName = imageNames[index] as HTMLParagraphElement
+    const fileName = convertImageName(imageName.innerText)
     const downloadOptions = {
       url: img.src.replace("thum2", "xl"),
-      filename: convertImageName(imageName.innerText),
+      filename: `dq10_album/${fileName}.jpg`,
       conflictAction: "uniquify",
+      saveAs: false,
     }
 
-    console.table(downloadOptions)
-    // chrome.downloads.download(downloadOptions, (downloadId) => {
-    //  console.log(downloadId)
-    // })
+    chrome.runtime.sendMessage(downloadOptions)
   })
+
+  alert("ダウンロードが完了しました")
 
   return true
 }
