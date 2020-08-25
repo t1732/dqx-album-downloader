@@ -6,8 +6,8 @@ const convertImageName = (name: string): string => {
   }
 }
 
-const downloadCurrentPageImages = (): boolean => {
-  const imageFrame = document.querySelector(".contentsFrameArea")
+const downloadCurrentPageImages = (target: Document): boolean => {
+  const imageFrame = target.querySelector(".contentsFrameArea")
 
   if (!imageFrame) {
     console.log("ダウンロードできませんでした。思い出アルバムページではないかHTMLの構造が変わった可能性があります")
@@ -39,11 +39,27 @@ const downloadCurrentPageImages = (): boolean => {
   return true
 }
 
+const downloadAllPageImages = (target: Document) => {
+  const baseUrl = location.href.replace(/\/page\/\d*/, "")
+  const page = 11
+  chrome.runtime.sendMessage({loadUrl: `${baseUrl}/page/${page}`}, (data) => {
+    const domparser = new DOMParser()
+    const doc = domparser.parseFromString(data.html, "text/html")
+    downloadCurrentPageImages(doc)
+  })
+}
+
 const main = () => {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type == "current") {
-      sendResponse(downloadCurrentPageImages())
+    if (request.type === "current") {
+      sendResponse(downloadCurrentPageImages(document))
     }
+
+    if (request.type === "all") {
+      sendResponse(downloadAllPageImages(document))
+    }
+
+    return true
   })
 }
 
