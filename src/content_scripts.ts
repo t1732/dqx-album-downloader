@@ -6,11 +6,15 @@ const convertImageName = (name: string): string => {
   }
 }
 
+const onError = (): void => {
+  console.log("ダウンロードできませんでした。思い出アルバムページではないかHTMLの構造が変わった可能性があります")
+}
+
 const downloadCurrentPageImages = (target: Document): boolean => {
   const imageFrame = target.querySelector(".contentsFrameArea")
 
   if (!imageFrame) {
-    console.log("ダウンロードできませんでした。思い出アルバムページではないかHTMLの構造が変わった可能性があります")
+    onError()
     return false
   }
 
@@ -39,13 +43,43 @@ const downloadCurrentPageImages = (target: Document): boolean => {
   return true
 }
 
-const downloadAllPageImages = (target: Document) => {
+const downloadAllPageImages = () => {
   const baseUrl = location.href.replace(/\/page\/\d*/, "")
-  const page = 11
-  chrome.runtime.sendMessage({loadUrl: `${baseUrl}/page/${page}`}, (data) => {
-    const domparser = new DOMParser()
-    const doc = domparser.parseFromString(data.html, "text/html")
-    downloadCurrentPageImages(doc)
+  const pageNavi = document.querySelector(".pageNavi")
+  let page: string | undefined
+
+  if (pageNavi) {
+    const lastPager = pageNavi.querySelector("li.last")
+    if (lastPager) {
+      page = lastPager.querySelector("a")?.dataset.pageno
+      console.log(page)
+    } else {
+      page = pageNavi.querySelector<HTMLLIElement>("li:last-child")?.innerText
+      if (page) {
+        console.log(page)
+      } else {
+        onError()
+        return
+      }
+    }
+  } else {
+    onError()
+    return
+  }
+
+  if (!page) {
+    onError()
+    return
+  }
+
+  const lastPageNum: number = parseInt(page)
+  const x: Array<number> = [...Array(lastPageNum)]
+  x.map((_, i) => {
+    chrome.runtime.sendMessage({loadUrl: `${baseUrl}/page/${i}`}, (data) => {
+      const domparser = new DOMParser()
+      const doc = domparser.parseFromString(data.html, "text/html")
+      downloadCurrentPageImages(doc)
+    })
   })
 }
 
@@ -56,7 +90,7 @@ const main = () => {
     }
 
     if (request.type === "all") {
-      sendResponse(downloadAllPageImages(document))
+      sendResponse(downloadAllPageImages())
     }
 
     return true
