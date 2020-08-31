@@ -43,8 +43,8 @@ const downloadCurrentPageImages = (target: Document): boolean => {
   return true
 }
 
-const downloadAllPageImages = () => {
-  const baseUrl = location.href.replace(/\/page\/\d*/, "")
+const downloadAllPageImages = (url: string) => {
+  const baseUrl = url.replace(/\/page\/\d*/, "")
   const pageNavi = document.querySelector(".pageNavi")
   let page: string | undefined
 
@@ -90,7 +90,7 @@ const main = () => {
     }
 
     if (request.type === "all") {
-      sendResponse(downloadAllPageImages())
+      sendResponse(downloadAllPageImages(request.url))
     }
 
     return true
