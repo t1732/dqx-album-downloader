@@ -1,3 +1,6 @@
+import React from "react"
+import ReactDOM from "react-dom"
+import Popup from "./components/popup"
 import "./popup.styl"
 
 const sendClickMessage = (tab: chrome.tabs.Tab, type: string): void => {
@@ -15,6 +18,8 @@ const sendClickMessage = (tab: chrome.tabs.Tab, type: string): void => {
 }
 
 const popup = () => {
+  ReactDOM.render(<Popup />, document.getElementById("root"))
+
   const btnCurrent = document.getElementById("btn-current")
   const btnAll = document.getElementById("btn-all")
 
