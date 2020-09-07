@@ -19,9 +19,13 @@ const config: ConfigurationFactory = () => {
     module: {
       rules: [
         {
-          test: /.ts$/,
-          use: "ts-loader",
-          exclude: "/node_modules/",
+          test: /\.tsx?$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'babel-loader',
+            },
+          ],
         },
         {
           test: /\.pug$/,
