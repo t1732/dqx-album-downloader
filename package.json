@@ -25,6 +25,7 @@
     "css-loader": "^4.2.1",
     "eslint": "^7.7.0",
     "eslint-config-google": "^0.14.0",
+    "eslint-plugin-pug": "^1.2.2",
     "html-webpack-plugin": "^4.3.0",
     "mini-css-extract-plugin": "^0.10.0",
     "pug": "^3.0.0",
@@ -46,7 +47,6 @@
   "scripts": {
     "clean": "rimraf ./dist",
     "build": "yarn clean && webpack",
-    "lint": "eslint src/**/*.ts",
-    "fixlint": "eslint src/**/*.ts --fix"
+    "lint": "eslint --ext .ts --ext .tsx --ext pug src/"
   }
 }
