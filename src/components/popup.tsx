@@ -9,6 +9,7 @@ import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import {DownloadButton} from "./button"
 import {LoadingOverlay} from "./loading-overlay"
+import {imageInfo} from "../content_scripts"
 
 const theme = createMuiTheme({
   palette: {
@@ -94,6 +95,62 @@ const clickAllPage = () => {
   })
 }
 
+const loadCurrentTab = () => {
+  return new Promise<chrome.tabs.Tab>((resolve, _reject) => {
+    chrome.tabs.query({
+      currentWindow: true,
+      active: true,
+      status: "complete",
+      url: "https://hiroba.dqx.jp/sc/character/*/picture/*",
+    }, (tabs) => {
+      if (tabs.length === 0) {
+        throw new Error("思い出アルバムのページを表示した状態で実行してください")
+      } else {
+        const tab = tabs[0]
+        resolve(tab)
+      }
+    })
+  })
+}
+
+const loadImages = (tabId: number, data: {[key: string]: string}) => {
+  return new Promise<imageInfo[]>((resolve, _reject) => {
+    chrome.tabs.sendMessage(tabId, data, (response: imageInfo[]) => {
+      resolve(response)
+    })
+  })
+}
+
+const loadCurrentImages = async () => {
+  try {
+    const tab = await loadCurrentTab()
+
+    if (!tab.id || !tab.url) {
+      throw new Error("思い出アルバムのページを表示した状態で実行してください")
+    }
+
+    const sendData = {
+      type: "current",
+      url: tab.url,
+    }
+
+    return await loadImages(tab.id, sendData)
+  } catch (error) {
+    alert(error)
+  }
+}
+
+const didMount = async (setLoading: (loading: boolean) => void) => {
+  setLoading(true)
+  try {
+    const _images = await loadCurrentImages()
+    alert(_images?.length)
+    setLoading(false)
+  } catch (error) {
+    alert(error)
+  }
+}
+
 export const Popup: React.FC = () => {
   const [tab, setTab] = React.useState(0)
   const handleChange = (event: React.ChangeEvent<{}>, newTab: number) => {
@@ -101,10 +158,12 @@ export const Popup: React.FC = () => {
   }
   const [loading, setLoading] = React.useState(false)
 
-  // mounted
+  // componentDidMount
   React.useEffect(() => {
-    setLoading(true)
-  })
+    didMount((loading) => {
+      setLoading(loading)
+    })
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>

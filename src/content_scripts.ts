@@ -83,10 +83,41 @@ const downloadAllPageImages = (url: string) => {
   })
 }
 
+export type imageInfo = Partial<{
+  url: string
+  thmb: string
+  name: string
+}>
+
+const fetchCurrentPageImages = (target: Document): imageInfo[] => {
+  const imageFrame = target.querySelector(".contentsFrameArea")
+
+  if (!imageFrame) {
+    onError()
+    return []
+  }
+
+  const images = Array.from(imageFrame.querySelectorAll("img"))
+  const imageNames = imageFrame.getElementsByClassName("thumbLocationAndDate")
+
+  return images
+      .filter((img) => img.src.match("webpicture") !== null)
+      .map((img, index) => {
+        const imageName = imageNames[index] as HTMLParagraphElement
+        const fileName = convertImageName(imageName.innerText)
+
+        return {
+          url: img.src.replace("thum2", "xl"),
+          thum: img.src,
+          name: `dq10_album/${fileName}.jpg`,
+        }
+      })
+}
+
 const main = () => {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === "current") {
-      sendResponse(downloadCurrentPageImages(document))
+      sendResponse(fetchCurrentPageImages(document))
     }
 
     if (request.type === "all") {
