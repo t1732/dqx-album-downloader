@@ -1,14 +1,47 @@
 import React from "react"
 import CssBaseline from "@material-ui/core/CssBaseline"
 import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles"
+import AppBar from "@material-ui/core/AppBar"
 import Box from "@material-ui/core/Box"
+import Tabs from "@material-ui/core/Tabs"
+import Tab from "@material-ui/core/Tab"
+import Toolbar from "@material-ui/core/Toolbar"
+import Typography from "@material-ui/core/Typography"
 import {DownloadButton} from "./button"
 
-const theme = createMuiTheme({
-  palette: {
-    type: "dark",
-  },
-})
+interface TabPanelProps {
+  children?: React.ReactNode
+  dir?: string
+  index: any
+  value: any
+}
+
+const TabPanel = (props: TabPanelProps) => {
+  const {children, value, index, ...other} = props
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      aria-labelledby={`full-width-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  )
+}
+
+const a11yProps = (index: any) => {
+  return {
+    "id": `full-width-tab-${index}`,
+    "aria-controls": `full-width-tabpanel-${index}`,
+  }
+}
 
 const sendClickMessage = (tab: chrome.tabs.Tab, type: string): void => {
   const sendData = {
@@ -54,18 +87,46 @@ const clickAllPage = () => {
   })
 }
 
-export const Popup: React.FC = () => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <Box width={600}>
-      <div className="with-title">
-        <p className="title">DQX 思い出アルバムダウンローダ</p>
-      ダウンロードする対象のボタンをクリックしてください
-      </div>
-      <div className="container">
-        <DownloadButton text="現在のページ" onClick={clickCurrentPage} />
-        <DownloadButton text="すべてのぺーじ" onClick={clickAllPage} />
-      </div>
-    </Box>
-  </ThemeProvider>
-)
+export const Popup: React.FC = () => {
+  const theme = createMuiTheme({
+    palette: {
+      type: "dark",
+    },
+  })
+  const [value, setValue] = React.useState(0)
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue)
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box width={600}>
+        <AppBar position="static">
+          <Toolbar variant="dense">
+            <Typography variant="h6" color="inherit">
+            DQX 思い出アルバムダウンローダ
+            </Typography>
+          </Toolbar>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            indicatorColor="secondary"
+            textColor="secondary"
+            variant="fullWidth"
+            aria-label="select load type"
+          >
+            <Tab label="現在のページ" {...a11yProps(0)} />
+            <Tab label="すべてのぺーじ" {...a11yProps(1)} />
+          </Tabs>
+        </AppBar>
+        <TabPanel value={value} index={0} dir={theme.direction}>
+          <DownloadButton text="ダウンロード" onClick={clickCurrentPage} />
+        </TabPanel>
+        <TabPanel value={value} index={1} dir={theme.direction}>
+          <DownloadButton text="ダウンロード" onClick={clickAllPage} />
+        </TabPanel>
+      </Box>
+    </ThemeProvider>
+  )
+}
