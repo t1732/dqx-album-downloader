@@ -8,13 +8,20 @@ import Tab from "@material-ui/core/Tab"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import {DownloadButton} from "./button"
+import {LoadingOverlay} from "./loading-overlay"
 
-interface TabPanelProps {
+const theme = createMuiTheme({
+  palette: {
+    type: "dark",
+  },
+})
+
+type TabPanelProps = Partial<{
   children?: React.ReactNode
   dir?: string
   index: any
   value: any
-}
+}>
 
 const TabPanel = (props: TabPanelProps) => {
   const {children, value, index, ...other} = props
@@ -88,15 +95,16 @@ const clickAllPage = () => {
 }
 
 export const Popup: React.FC = () => {
-  const theme = createMuiTheme({
-    palette: {
-      type: "dark",
-    },
-  })
-  const [value, setValue] = React.useState(0)
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue)
+  const [tab, setTab] = React.useState(0)
+  const handleChange = (event: React.ChangeEvent<{}>, newTab: number) => {
+    setTab(newTab)
   }
+  const [loading, setLoading] = React.useState(false)
+
+  // mounted
+  React.useEffect(() => {
+    setLoading(true)
+  })
 
   return (
     <ThemeProvider theme={theme}>
@@ -109,7 +117,7 @@ export const Popup: React.FC = () => {
             </Typography>
           </Toolbar>
           <Tabs
-            value={value}
+            value={tab}
             onChange={handleChange}
             indicatorColor="secondary"
             textColor="secondary"
@@ -120,13 +128,14 @@ export const Popup: React.FC = () => {
             <Tab label="すべてのぺーじ" {...a11yProps(1)} />
           </Tabs>
         </AppBar>
-        <TabPanel value={value} index={0} dir={theme.direction}>
+        <TabPanel value={tab} index={0} dir={theme.direction}>
           <DownloadButton text="ダウンロード" onClick={clickCurrentPage} />
         </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
+        <TabPanel value={tab} index={1} dir={theme.direction}>
           <DownloadButton text="ダウンロード" onClick={clickAllPage} />
         </TabPanel>
       </Box>
+      <LoadingOverlay open={loading} />
     </ThemeProvider>
   )
 }
