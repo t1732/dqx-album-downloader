@@ -5,18 +5,44 @@
     "es2020": true
   },
   "extends": [
-    "google"
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:import/typescript",
+    "plugin:react/recommended",
+    "prettier/react",
+    "google",
+    "plugin:prettier/recommended",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 11,
+    "ecmaFeatures": {
+      "jsx": true
+    },
     "sourceType": "module"
   },
   "plugins": [
+    "react",
     "@typescript-eslint",
+    "import",
+    "prettier",
     "pug"
   ],
   "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "semi": false,
+        "singleQuote": false
+      }
+    ],
     "quotes": [
       "error",
       "double"
@@ -39,8 +65,25 @@
       "error",
       "first"
     ],
+    "max-len": [
+      "error",
+      {
+        "code": 100
+      }
+    ],
+    "sort-imports": 0,
+    "import/order": [
+      2,
+      {
+        "alphabetize": { "order": "asc" }
+      }
+    ],
     "no-extra-semi": "error",
     "no-unexpected-multiline": "error",
-    "no-unreachable": "error"
+    "no-unreachable": "error",
+    "react/prop-types": ["off"],
+    "@typescript-eslint/ban-types": ["off"],
+    "@typescript-eslint/no-explicit-any": ["off"],
+    "@typescript-eslint/no-unused-vars": ["off"]
   }
 }

@@ -7,7 +7,9 @@ const convertImageName = (name: string): string => {
 }
 
 const onError = (): void => {
-  console.log("ダウンロードできませんでした。思い出アルバムページではないかHTMLの構造が変わった可能性があります")
+  console.log(
+    "ダウンロードできませんでした。思い出アルバムページではないかHTMLの構造が変わった可能性があります"
+  )
 }
 
 const downloadCurrentPageImages = (target: Document): boolean => {
@@ -75,7 +77,7 @@ const downloadAllPageImages = (url: string) => {
   const lastPageNum: number = parseInt(page)
   const x: Array<number> = [...Array(lastPageNum)]
   x.map((_, i) => {
-    chrome.runtime.sendMessage({loadUrl: `${baseUrl}/page/${i}`}, (data) => {
+    chrome.runtime.sendMessage({ loadUrl: `${baseUrl}/page/${i}` }, (data) => {
       const domparser = new DOMParser()
       const doc = domparser.parseFromString(data.html, "text/html")
       downloadCurrentPageImages(doc)
@@ -101,17 +103,17 @@ const fetchCurrentPageImages = (target: Document): imageInfo[] => {
   const imageNames = imageFrame.getElementsByClassName("thumbLocationAndDate")
 
   return images
-      .filter((img) => img.src.match("webpicture") !== null)
-      .map((img, index) => {
-        const imageName = imageNames[index] as HTMLParagraphElement
-        const fileName = convertImageName(imageName.innerText)
+    .filter((img) => img.src.match("webpicture") !== null)
+    .map((img, index) => {
+      const imageName = imageNames[index] as HTMLParagraphElement
+      const fileName = convertImageName(imageName.innerText)
 
-        return {
-          url: img.src.replace("thum2", "xl"),
-          thum: img.src,
-          name: `dq10_album/${fileName}.jpg`,
-        }
-      })
+      return {
+        url: img.src.replace("thum2", "xl"),
+        thum: img.src,
+        name: `dq10_album/${fileName}.jpg`,
+      }
+    })
 }
 
 const main = () => {

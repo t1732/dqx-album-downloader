@@ -1,15 +1,15 @@
-import React from "react"
-import CssBaseline from "@material-ui/core/CssBaseline"
-import {createMuiTheme, ThemeProvider} from "@material-ui/core/styles"
 import AppBar from "@material-ui/core/AppBar"
 import Box from "@material-ui/core/Box"
-import Tabs from "@material-ui/core/Tabs"
+import CssBaseline from "@material-ui/core/CssBaseline"
 import Tab from "@material-ui/core/Tab"
+import Tabs from "@material-ui/core/Tabs"
 import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
-import {DownloadButton} from "./button"
-import {LoadingOverlay} from "./loading-overlay"
-import {imageInfo} from "../content_scripts"
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
+import React from "react"
+import { imageInfo } from "../content_scripts"
+import { DownloadButton } from "./button"
+import { LoadingOverlay } from "./loading-overlay"
 
 const theme = createMuiTheme({
   palette: {
@@ -25,7 +25,7 @@ type TabPanelProps = Partial<{
 }>
 
 const TabPanel = (props: TabPanelProps) => {
-  const {children, value, index, ...other} = props
+  const { children, value, index, ...other } = props
 
   return (
     <div
@@ -46,7 +46,7 @@ const TabPanel = (props: TabPanelProps) => {
 
 const a11yProps = (index: any) => {
   return {
-    "id": `full-width-tab-${index}`,
+    id: `full-width-tab-${index}`,
     "aria-controls": `full-width-tabpanel-${index}`,
   }
 }
@@ -62,58 +62,68 @@ const sendClickMessage = (tab: chrome.tabs.Tab, type: string): void => {
   }
 
   chrome.tabs.sendMessage(tab.id, sendData, (response) => {
+    return
   })
 }
 
 const clickCurrentPage = () => {
-  chrome.tabs.query({
-    currentWindow: true,
-    active: true,
-    status: "complete",
-    url: "https://hiroba.dqx.jp/sc/character/*/picture/*",
-  }, (tabs) => {
-    if (tabs.length === 0) {
-      alert("思い出アルバムのページを表示した状態で実行してください")
-    } else {
-      sendClickMessage(tabs[0], "current")
-    }
-  })
-}
-
-const clickAllPage = () => {
-  chrome.tabs.query({
-    currentWindow: true,
-    active: true,
-    status: "complete",
-    url: "https://hiroba.dqx.jp/sc/character/*/picture/*",
-  }, (tabs) => {
-    if (tabs.length === 0) {
-      alert("思い出アルバムのページを表示した状態で実行してください")
-    } else {
-      sendClickMessage(tabs[0], "all")
-    }
-  })
-}
-
-const loadCurrentTab = () => {
-  return new Promise<chrome.tabs.Tab>((resolve, _reject) => {
-    chrome.tabs.query({
+  chrome.tabs.query(
+    {
       currentWindow: true,
       active: true,
       status: "complete",
       url: "https://hiroba.dqx.jp/sc/character/*/picture/*",
-    }, (tabs) => {
+    },
+    (tabs) => {
       if (tabs.length === 0) {
-        throw new Error("思い出アルバムのページを表示した状態で実行してください")
+        alert("思い出アルバムのページを表示した状態で実行してください")
       } else {
-        const tab = tabs[0]
-        resolve(tab)
+        sendClickMessage(tabs[0], "current")
       }
-    })
+    }
+  )
+}
+
+const clickAllPage = () => {
+  chrome.tabs.query(
+    {
+      currentWindow: true,
+      active: true,
+      status: "complete",
+      url: "https://hiroba.dqx.jp/sc/character/*/picture/*",
+    },
+    (tabs) => {
+      if (tabs.length === 0) {
+        alert("思い出アルバムのページを表示した状態で実行してください")
+      } else {
+        sendClickMessage(tabs[0], "all")
+      }
+    }
+  )
+}
+
+const loadCurrentTab = () => {
+  return new Promise<chrome.tabs.Tab>((resolve, _reject) => {
+    chrome.tabs.query(
+      {
+        currentWindow: true,
+        active: true,
+        status: "complete",
+        url: "https://hiroba.dqx.jp/sc/character/*/picture/*",
+      },
+      (tabs) => {
+        if (tabs.length === 0) {
+          throw new Error("思い出アルバムのページを表示した状態で実行してください")
+        } else {
+          const tab = tabs[0]
+          resolve(tab)
+        }
+      }
+    )
   })
 }
 
-const loadImages = (tabId: number, data: {[key: string]: string}) => {
+const loadImages = (tabId: number, data: { [key: string]: string }) => {
   return new Promise<imageInfo[]>((resolve, _reject) => {
     chrome.tabs.sendMessage(tabId, data, (response: imageInfo[]) => {
       resolve(response)
@@ -172,7 +182,7 @@ export const Popup: React.FC = () => {
         <AppBar position="static">
           <Toolbar variant="dense">
             <Typography variant="h6" color="inherit">
-            DQX 思い出アルバムダウンローダ
+              DQX 思い出アルバムダウンローダ
             </Typography>
           </Toolbar>
           <Tabs
