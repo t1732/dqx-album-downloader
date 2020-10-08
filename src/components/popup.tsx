@@ -1,14 +1,11 @@
-import AppBar from "@material-ui/core/AppBar"
 import Box from "@material-ui/core/Box"
 import CssBaseline from "@material-ui/core/CssBaseline"
-import Tab from "@material-ui/core/Tab"
-import Tabs from "@material-ui/core/Tabs"
-import Toolbar from "@material-ui/core/Toolbar"
 import Typography from "@material-ui/core/Typography"
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
 import React from "react"
 import { imageInfo } from "../content_scripts"
 import { DownloadButton } from "./button"
+import { Header } from "./header"
 import { LoadingOverlay } from "./loading-overlay"
 
 const theme = createMuiTheme({
@@ -42,13 +39,6 @@ const TabPanel = (props: TabPanelProps) => {
       )}
     </div>
   )
-}
-
-const a11yProps = (index: any) => {
-  return {
-    id: `full-width-tab-${index}`,
-    "aria-controls": `full-width-tabpanel-${index}`,
-  }
 }
 
 const sendClickMessage = (tab: chrome.tabs.Tab, type: string): void => {
@@ -179,24 +169,7 @@ export const Popup: React.FC = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box width={600}>
-        <AppBar position="static">
-          <Toolbar variant="dense">
-            <Typography variant="h6" color="inherit">
-              DQX 思い出アルバムダウンローダ
-            </Typography>
-          </Toolbar>
-          <Tabs
-            value={tab}
-            onChange={handleChange}
-            indicatorColor="secondary"
-            textColor="secondary"
-            variant="fullWidth"
-            aria-label="select load type"
-          >
-            <Tab label="現在のページ" {...a11yProps(0)} />
-            <Tab label="すべてのぺーじ" {...a11yProps(1)} />
-          </Tabs>
-        </AppBar>
+        <Header tab={tab} handleChange={handleChange} />
         <TabPanel value={tab} index={0} dir={theme.direction}>
           <DownloadButton text="ダウンロード" onClick={clickCurrentPage} />
         </TabPanel>
