@@ -1,45 +1,17 @@
-import Box from "@material-ui/core/Box"
-import CssBaseline from "@material-ui/core/CssBaseline"
-import Typography from "@material-ui/core/Typography"
+import { Box, CssBaseline } from "@material-ui/core"
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles"
 import React from "react"
 import { imageInfo } from "../content_scripts"
 import { DownloadButton } from "./button"
 import { Header } from "./header"
 import { LoadingOverlay } from "./loading-overlay"
+import { TabPanel } from "./tab-panel"
 
 const theme = createMuiTheme({
   palette: {
     type: "dark",
   },
 })
-
-type TabPanelProps = Partial<{
-  children?: React.ReactNode
-  dir?: string
-  index: any
-  value: any
-}>
-
-const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...other } = props
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  )
-}
 
 const sendClickMessage = (tab: chrome.tabs.Tab, type: string): void => {
   const sendData = {
