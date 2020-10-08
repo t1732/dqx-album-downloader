@@ -9,7 +9,7 @@ const config: ConfigurationFactory = () => {
     mode: "production",
     entry: {
       content_scripts: path.join(__dirname, "src", "content_scripts.ts"),
-      popup: path.join(__dirname, "src", "popup.ts"),
+      popup: path.join(__dirname, "src", "popup.tsx"),
       background: path.join(__dirname, "src", "background.ts"),
     },
     output: {
@@ -19,7 +19,7 @@ const config: ConfigurationFactory = () => {
     module: {
       rules: [
         {
-          test: /.ts$/,
+          test: /.tsx?$/,
           use: "ts-loader",
           exclude: "/node_modules/",
         },
@@ -45,7 +45,7 @@ const config: ConfigurationFactory = () => {
       ],
     },
     resolve: {
-      extensions: [".ts", ".js", ".styl"],
+      extensions: [".ts", ".tsx", ".js", ".styl"],
     },
     plugins: [
       new CopyPlugin({
